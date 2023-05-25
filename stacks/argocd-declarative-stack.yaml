@@ -1,0 +1,36 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: project-one
+  namespace: argocd
+spec:
+  sourceRepos:
+  - https://github.com/Divyachikkam-dev/divyatestrepo.git
+  destinations:
+  - namespace: argocd
+    server: https://kubernetes.default.svc
+  - namespace: jenkins
+    server: https://kubernetes.default.svc
+  clusterResourceWhitelist:
+  - group: '*'
+    kind: '*'
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: project-one
+  namespace: argocd
+spec:
+  project: project-one
+  source:
+    repoURL: https://github.com/Divyachikkam-dev/divyatestrepo.git
+    targetRevision: master
+    path: Applications/jenkins
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: jenkins
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
